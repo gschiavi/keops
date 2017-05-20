@@ -288,7 +288,7 @@ def report(request, report_file=None, report=None):
                 import fastreport
                 fastreport.show_report(destfrx, outname, format, 'Dsn=gsf;uid=sped2;pwd=sped2')
                 #os.unlink(destfrx)
-                return JsonResponse(ret)
+                return ret
 
 
 def get_report_file(filename):
