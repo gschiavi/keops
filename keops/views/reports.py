@@ -222,7 +222,7 @@ def report(request, report_file=None, report=None):
             if 'value1' in param and param['value1']:
                 val1 = param['value1']
                 val2 = param.get('value2')
-                if param['type'] == 'datetime':
+                if param['type'] == 'DateTimeField':
                     if val1:
                         val1 = "TO_DATE('%s', 'yyyy-mm-dd')" % val1
                     if val2:
