@@ -167,7 +167,7 @@ class Report
         containment: 'parent'
         start: -> sel.select2("onSortStart")
         update: -> sel.select2("onSortEnd")
-    if @userReport and @userReport.params.fields
+    if @userReport.id and @userReport.params.fields
       console.log('load user params', @userReport.params)
       sel.select2('val', @userReport.params.fields)
     #sel.data().select2.updateSelection([{ id: 'vehicle', text: 'Vehicle'}])
@@ -185,7 +185,7 @@ class Report
     @elParams = el
     loaded = {}
 
-    if @userReport and @userReport.params.data
+    if @userReport.id and @userReport.params.data
       for p in @userReport.params.data
         loaded[p.name] = true
         @addParam(p.name, [p.value1, p.value2])

@@ -280,7 +280,7 @@
           return sel.select2("onSortEnd");
         }
       });
-      if (this.userReport && this.userReport.params.fields) {
+      if (this.userReport.id && this.userReport.params.fields) {
         console.log('load user params', this.userReport.params);
         sel.select2('val', this.userReport.params.fields);
       }
@@ -318,7 +318,7 @@
       el = $('<div></div>');
       this.elParams = el;
       loaded = {};
-      if (this.userReport && this.userReport.params.data) {
+      if (this.userReport.id && this.userReport.params.data) {
         ref = this.userReport.params.data;
         for (i = 0, len = ref.length; i < len; i++) {
           p = ref[i];

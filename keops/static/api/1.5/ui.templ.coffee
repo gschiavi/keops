@@ -364,7 +364,6 @@ class Templates
                 aria-expanded="false"><i class="fa fa-gear fa-fw"></i></button>
         <ul class="dropdown-menu">
           <li><a href="javascript:void(0)" ng-click="report.saveDialog()">#{ Katrid.i18n.gettext 'Save' }</a></li>
-          <li><a href="#">#{ Katrid.i18n.gettext 'Load' }</a></li>
         </ul>
       </div>
 
