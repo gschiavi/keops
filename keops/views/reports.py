@@ -271,9 +271,9 @@ def report(request, report_file=None, report=None):
                 user_report.save()
                 return JsonResponse({'message': 'Success', 'ok': True, 'status': 'ok'})
             else:
+                format = params['kwargs'].get('format', 'pdf')
                 params = params['kwargs']['params']
                 data = params['data']
-                format = params.get('forma  t', 'pdf')
                 filename = report_file or params['file']
                 report_template = get_report_file(filename)
                 report_file = report_template.attrib['report-file']
