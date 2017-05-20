@@ -54,6 +54,7 @@
       Katrid.Reports.Reports.currentUserReport.params = {{ user_report.user_params|safe }};
     {% endif %}
     var report = {{ report|safe }};
+    console.log('report', report);
     report = new Katrid.Reports.Report(report, scope);
       report.load();
     var el = report.render(cont, scope);

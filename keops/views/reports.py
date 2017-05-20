@@ -30,6 +30,7 @@ def _report(request, report_file=None):
                 rep['fields'] = fields
                 for field in el:
                     attrs = {k.replace('-', '_'): v for k, v in dict(field.attrib).items()}
+                    print('param', attrs)
                     param = attrs.get('param')
                     if param == 'true':
                         attrs['param'] = True
@@ -37,7 +38,6 @@ def _report(request, report_file=None):
                         attrs['sql_choices'] = True
                     fields.append(attrs)
         rep['file'] = filename
-        rep = json.dumps(rep)
         user_report = request.GET.get('load')
         if user_report:
             user_report = report_models.UserReport.objects.get(pk=request.GET['load'])
@@ -50,6 +50,14 @@ def _report(request, report_file=None):
         groups = [obj.pk for obj in request.user.groups.all()]
         menu = Menu.objects.filter(parent_id=None, groups__in=groups)
 
+    return {
+        'content': open(os.path.join(settings.BASE_DIR, 'reports', filename), encoding='utf-8').read(),
+        'fields': {f['name']: f for f in rep['fields']},
+        'user_reports': [
+            {'id': rep.pk, 'name': rep.name}
+            for rep in report_models.UserReport.objects.filter(report__name=report_file)
+        ],
+    }
     ctx = {
         '_': _,
         'user_reports': report_models.UserReport.objects.filter(report__name=report_file or request.GET.get('file')),
@@ -131,7 +139,9 @@ def dashboard(request):
 
 
 @login_required
-def report(request, report_file=None):
+def report(request, report_file=None, report=None):
+    if report and report_file is None:
+        report_file = report.name
 
     def clone(file, params, dest_file, templ):
         group_template = '''
@@ -160,7 +170,7 @@ def report(request, report_file=None):
                 data_band.remove(txt)
             for txt in list(page_header):
                 page_header.remove(txt)
-            param_fields = params['fields']
+            param_fields = params['fields'].split(',')
             for i, field in enumerate(param_fields):
                 w = 80
                 ftype = fields[field].get('type', 'str')
@@ -218,20 +228,20 @@ def report(request, report_file=None):
                         val1 = "TO_DATE('%s', 'yyyy-mm-dd')" % val1
                     if val2:
                         val2 = "TO_DATE('%s', 'yyyy-mm-dd')" % val2
-                if param['operation'] == 'contains':
+                if param['op'] == 'contains':
                     sqls.append("upper({0}) like upper('%{1}%')".format(param['name'], param['value1']))
-                elif param['operation'] == 'startsWith':
+                elif param['op'] == 'startsWith':
                     sqls.append("upper({0}) like upper('{1}%')".format(param['name'], param['value1']))
-                elif param['operation'] == 'equals':
+                elif param['op'] == 'equals':
                     sqls.append("{0} = '{1}'".format(param['name'], param['value1']))
-                elif param['operation'] == 'between':
+                elif param['op'] == 'between':
                     sqls.append("{0} BETWEEN {1} and {2}".format(param['name'], val1, val2))
         sql = ' AND '.join(sqls)
 
         sel_cmd = templ.findall('.//dataset')[0].text
 
         datasource = xml.findall('.//TableDataSource')[0]
-        sel_cmd = sel_cmd % params['file'].rsplit('.', 1)[0]
+        sel_cmd = sel_cmd % report.name.rsplit('.', 1)[0]
         sorting = params.get('sorting')
         if sorting:
             sql += ' ORDER BY ' + ','.join(sorting)
@@ -242,7 +252,6 @@ def report(request, report_file=None):
             sel_cmd = pattern.sub(' WHERE ' + sql, sel_cmd)
             pattern = re.compile(r"/\*whereclause\*/", re.IGNORECASE)
             sel_cmd = pattern.sub(' WHERE ' + sql, sel_cmd)
-        print(sel_cmd)
         datasource.attrib['SelectCommand'] = sel_cmd
 
         et.ElementTree(xml).write(dest_file, encoding='utf-8', xml_declaration=True)
@@ -251,7 +260,7 @@ def report(request, report_file=None):
         if request.is_ajax():
             params = json.loads(request.body.decode('utf-8'))
             if 'save' in request.GET:
-                rep = report_models.Report.objects.create(name=params['file'])
+                rep = report_models.Report.objects.get(pk=params['report_id'])
                 user_report_name = request.GET['save']
                 if report_models.UserReport.objects.filter(name=user_report_name).count():
                     user_report = report_models.UserReport.objects.get(name=user_report_name)
@@ -259,13 +268,14 @@ def report(request, report_file=None):
                     user_report = report_models.UserReport()
                 user_report.report_id = rep.pk
                 user_report.name = user_report_name
-                user_report.user_params = request.body.decode('utf-8')
+                user_report.user_params = json.dumps(params['params'])
                 user_report.save()
                 return JsonResponse({'message': 'Success', 'ok': True, 'status': 'ok'})
             else:
+                params = params['kwargs']['params']
                 data = params['data']
-                format = params.get('format', 'pdf')
-                filename = params['file']
+                format = params.get('forma  t', 'pdf')
+                filename = report_file or params['file']
                 report_template = get_report_file(filename)
                 report_file = report_template.attrib['report-file']
                 report_file = os.path.join(settings.BASE_DIR, 'reports', report_file)

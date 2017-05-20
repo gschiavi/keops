@@ -6,23 +6,23 @@
     <div ng-show="paramsAdvancedOptions">
       <div class="form-group">
         <label>{{ _('Printable Fields') }}</label>
-        <select id="report-id-fields" multiple></select>
+        <input type="hidden" id="report-id-fields">
       </div>
       <div class="form-group">
         <label>{{ _('Totalizing Fields') }}</label>
-        <select id="report-id-totals" multiple></select>
+        <input type="hidden" id="report-id-totals">
       </div>
     </div>
   </div>
 
   <div id="params-sorting" class="col-sm-12 form-group">
     <label class="control-label">{{ _('Sorting') }}</label>
-    <select multiple id="report-id-sorting"></select>
+    <input type="hidden" id="report-id-sorting">
   </div>
 
   <div id="params-grouping" class="col-sm-12 form-group">
     <label class="control-label">{{ _('Grouping') }}</label>
-    <select multiple id="report-id-grouping"></select>
+    <input type="hidden" id="report-id-grouping">
   </div>
 
   <div class="clearfix"></div>

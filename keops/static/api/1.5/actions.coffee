@@ -174,8 +174,9 @@ class ReportAction extends Action
       svc = new Katrid.Services.Model('sys.action.report')
       svc.post 'load_user_report', null, { kwargs: { user_report: @userReport.id } }
       .done (res) =>
+        console.log('user report loaded', res)
         @userReport.params = res.result
-        @scope.setContent(@info.content)
+        @scope.setContent(Katrid.Reports.Reports.renderDialog(@))
     else
       @scope.setContent(Katrid.Reports.Reports.renderDialog(@))
     return

@@ -62,10 +62,9 @@ class ReportAction(Action):
     def dispatch_action(self, request):
         from keops.views.reports import _report
         rep = _report(request, self.report.name)
-        return JsonResponse({
-            'action_type': 'ReportAction',
-            'content': rep,
-        })
+        rep['action_type'] = 'ReportAction'
+        rep['report_id'] = self.report.pk
+        return JsonResponse(rep)
 
 
 Action.ACTIONS['window'] = WindowAction

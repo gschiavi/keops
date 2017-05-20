@@ -261,8 +261,9 @@
           }
         }).done((function(_this) {
           return function(res) {
+            console.log('user report loaded', res);
             _this.userReport.params = res.result;
-            return _this.scope.setContent(_this.info.content);
+            return _this.scope.setContent(Katrid.Reports.Reports.renderDialog(_this));
           };
         })(this));
       } else {

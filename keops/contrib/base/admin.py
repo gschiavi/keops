@@ -50,6 +50,12 @@ class ReportActionService(services.ModelService):
         user_report = reports.UserReport.objects.get(pk=user_report)
         return json.loads(user_report.user_params)
 
+    @services.service_method
+    def export_report(self, report_id, **kwargs):
+        from keops.views.reports import report
+        rep = models.reports.Report.objects.get(pk=report_id)
+        return report(self.request, report=rep)
+
 
 class ActionService(services.ModelService):
     model = models.Action
