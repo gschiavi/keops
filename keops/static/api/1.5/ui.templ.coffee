@@ -340,12 +340,12 @@ class Templates
           <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                   aria-expanded="false">#{ Katrid.i18n.gettext 'Export'  } <span class="caret"></span></button>
           <ul class="dropdown-menu">
-            <li><a ng-click="Katrid.Reports.Reports.preview()">PDF</a></li>
-            <li><a href="javascript:void(0)" ng-click="Katrid.Reports.Reports.export('docx')">Word</a></li>
-            <li><a href="javascript:void(0)" ng-click="Katrid.Reports.Reports.export('xlsx')">Excel</a></li>
-            <li><a href="javascript:void(0)" ng-click="Katrid.Reports.Reports.export('pptx')">PowerPoint</a></li>
-            <li><a href="javascript:void(0)" ng-click="Katrid.Reports.Reports.export('csv')">CSV</a></li>
-            <li><a href="javascript:void(0)" ng-click="Katrid.Reports.Reports.export('txt')">#{ Katrid.i18n.gettext 'Text File' }</a></li>
+            <li><a href="javascript:void(0)" ng-click="report.preview()">PDF</a></li>
+            <li><a href="javascript:void(0)" ng-click="report.export('docx')">Word</a></li>
+            <li><a href="javascript:void(0)" ng-click="report.export('xlsx')">Excel</a></li>
+            <li><a href="javascript:void(0)" ng-click="report.export('pptx')">PowerPoint</a></li>
+            <li><a href="javascript:void(0)" ng-click="report.export('csv')">CSV</a></li>
+            <li><a href="javascript:void(0)" ng-click="report.export('txt')">#{ Katrid.i18n.gettext 'Text File' }</a></li>
           </ul>
         </div>
 
