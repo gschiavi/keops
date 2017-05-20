@@ -30,7 +30,6 @@ def _report(request, report_file=None):
                 rep['fields'] = fields
                 for field in el:
                     attrs = {k.replace('-', '_'): v for k, v in dict(field.attrib).items()}
-                    print('param', attrs)
                     param = attrs.get('param')
                     if param == 'true':
                         attrs['param'] = True
