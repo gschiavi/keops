@@ -21,6 +21,7 @@ class MenuService(services.ModelService):
 
 
 class WindowActionService(services.ModelService):
+    name = 'sys.action.window'
     model = models.WindowAction
 
 
@@ -65,7 +66,9 @@ site.register_service(UserService)
 site.register_service(GroupService)
 site.register_service(MenuService)
 site.register_service(WindowActionService, 'sys.action.window')
+site.register_service(WindowActionService, 'base.windowaction')
 site.register_service(RuleService)
 site.register_service(ReportService)
 site.register_service(ReportActionService, 'sys.action.report')
+site.register_service(ReportActionService, 'base.reportaction')
 site.register_service(ActionService)
