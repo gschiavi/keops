@@ -287,7 +287,6 @@ def report(request, report_file=None, report=None):
                 ret = {'open': download}
                 import fastreport
                 fastreport.show_report(destfrx, outname, format, 'Dsn=gsf;uid=sped2;pwd=sped2')
-                #os.unlink(destfrx)
                 return ret
 
 
