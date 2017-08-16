@@ -659,7 +659,7 @@
         sel.on('change', function(e) {
           var obj, service, v;
           v = sel.select2('data');
-          if (v.id === newItem) {
+          if (v && v.id === newItem) {
             service = new Katrid.Services.Model(scope.view.fields[attrs.name].model);
             return service.createName(v.str).then(function(res) {
               controller.$setDirty();
