@@ -79,6 +79,7 @@
       el = this.scope.formElement;
       if (this.validate()) {
         data = this.getModifiedData(this.scope.form, el, this.scope.record);
+        console.log('saving data', data);
         this.scope.form.data = data;
         beforeSubmit = el.attr('before-submit');
         console.log('before submit', beforeSubmit);

@@ -651,6 +651,7 @@
           }
         };
         multiple = attrs.multiple;
+        var _changing = false;
         if (multiple) {
           config['multiple'] = true;
         }
@@ -669,9 +670,13 @@
               });
             });
           } else if (v && multiple) {
-            // controller.$setViewValue(null);
-            controller.$modelValue = sel.select2('val');
-            controller.$setDirty();
+            try {
+              _changing = true;
+              controller.$setDirty();
+              controller.$setViewValue(sel.select2('val'));
+            } finally {
+              _changing = false;
+            }
           } else {
             controller.$setDirty();
             if (v) {
@@ -682,7 +687,7 @@
           }
         });
         scope.$watch(attrs.ngModel, function(newValue, oldValue) {
-          return sel.select2('val', newValue);
+          if (!_changing) sel.select2('val', newValue);
         });
         return controller.$render = function() {
           var obj, v;

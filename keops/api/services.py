@@ -161,7 +161,17 @@ class ModelService(ViewService):
         post_data = self.post_data.pop(id(instance), None)
 
         for k, v in self.m2m.items():
-            getattr(instance, k).set(v)
+            m2m_field = getattr(instance, k)
+            m2m_field.clear()
+
+        for k, v in self.m2m.items():
+            m2m_field = getattr(instance, k)
+            m = m2m_field.through
+            for vi in v:
+                m.objects.create(**{
+                    m2m_field.target_field_name: m2m_field.model.objects.get(pk=vi),
+                    m2m_field.source_field_name: instance,
+                })
 
         if post_data:
             for f, v in post_data.items():
@@ -179,7 +189,7 @@ class ModelService(ViewService):
                 elif isinstance(field, ForeignKey):
                     return [v.pk, str(v)]
                 elif isinstance(field, ManyToManyField):
-                    return [(v.id, str(v)) for v in v.all()]
+                    return [(v.pk, str(v)) for v in v.all()]
                 elif isinstance(field, DateField):
                     return str(v)
                 elif field.choices:
