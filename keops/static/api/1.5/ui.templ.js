@@ -86,7 +86,7 @@
     };
 
     Templates.prototype.renderList = function(scope, element, attrs, rowClick, parentDataSource) {
-      var choice, cls, col, colHtml, cols, fieldInfo, i, j, len, len1, name, ref, ref1, s, ths;
+      var choice, cls, col, colHtml, cols, decimalPlaces, fieldInfo, i, j, len, len1, name, ref, ref1, s, ths;
       ths = '<th ng-show="dataSource.groups.length"></th>';
       cols = "<td ng-show=\"dataSource.groups.length\" class=\"group-header\">\n<div ng-show=\"row._group\">\n<span class=\"fa fa-fw fa-caret-right\"\n  ng-class=\"{'fa-caret-down': row._group.expanded, 'fa-caret-right': row._group.collapsed}\"></span>\n  ${row._group.__str__} (${row._group.count})</div></td>";
       ref = element.children();
@@ -125,7 +125,8 @@
         } else if (fieldInfo.type === 'BooleanField') {
           cols += "<td class=\"bool-text " + cls + "\">${row." + name + " ? '" + (Katrid.i18n.gettext('yes')) + "' : '" + (Katrid.i18n.gettext('no')) + "'}</td>";
         } else if (fieldInfo.type === 'DecimalField') {
-          cols += "<td class=\"" + cls + "\">${row." + name + "|number:2}</td>";
+          decimalPlaces = fieldInfo.decimal_places || 2;
+          cols += "<td class=\"" + cls + "\">${row." + name + "|number:" + decimalPlaces + "}</td>";
         } else if (fieldInfo.type === 'DateField') {
           cols += "<td class=\"" + cls + "\">${row." + name + "|date:'" + (Katrid.i18n.gettext('yyyy-mm-dd').replace(/[m]/g, 'M')) + "'}</td>";
         } else {

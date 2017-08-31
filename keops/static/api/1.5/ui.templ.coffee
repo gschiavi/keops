@@ -303,7 +303,8 @@ class Templates
       else if fieldInfo.type is 'BooleanField'
         cols += """<td class="bool-text #{cls}">${row.#{name} ? '#{Katrid.i18n.gettext('yes')}' : '#{Katrid.i18n.gettext('no')}'}</td>"""
       else if fieldInfo.type is 'DecimalField'
-        cols += """<td class="#{cls}">${row.#{name}|number:2}</td>"""
+        decimalPlaces = fieldInfo.decimal_places or 2
+        cols += """<td class="#{cls}">${row.#{name}|number:#{decimalPlaces}}</td>"""
       else if fieldInfo.type is 'DateField'
         cols += """<td class="#{cls}">${row.#{name}|date:'#{Katrid.i18n.gettext('yyyy-mm-dd').replace(/[m]/g, 'M')}'}</td>"""
       else

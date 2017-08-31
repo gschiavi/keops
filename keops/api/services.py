@@ -248,6 +248,8 @@ class ModelService(ViewService):
             field = getattr(self.model, field.related_name)
             info['field'] = str(field.rel.field.name)
             info['model'] = str(field.rel.related_model._meta)
+        elif isinstance(field, DecimalField):
+            info['decimal_places'] = field.decimal_places
         elif field.choices:
             info['choices'] = field.choices
         return info

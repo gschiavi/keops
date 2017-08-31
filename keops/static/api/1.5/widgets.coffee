@@ -139,7 +139,8 @@ class DecimalField extends TextField
   tag: 'input decimal'
 
   spanTemplate: (scope, el, attrs, field) ->
-    return """<span class="form-field-readonly" ng-show="!dataSource.changing">${ (record.#{attrs.name}|number:2) || '--' }</span>"""
+    decimalPlaces = attrs.decimalPlaces or field.decimal_places or 2
+    return """<span class="form-field-readonly" ng-show="!dataSource.changing">${ (record.#{attrs.name}|number:#{decimalPlaces}) || '--' }</span>"""
 
 
 class DateField extends TextField

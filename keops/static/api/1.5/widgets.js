@@ -251,7 +251,9 @@
     DecimalField.prototype.tag = 'input decimal';
 
     DecimalField.prototype.spanTemplate = function(scope, el, attrs, field) {
-      return "<span class=\"form-field-readonly\" ng-show=\"!dataSource.changing\">${ (record." + attrs.name + "|number:2) || '--' }</span>";
+      var decimalPlaces;
+      decimalPlaces = attrs.decimalPlaces || field.decimal_places || 2;
+      return "<span class=\"form-field-readonly\" ng-show=\"!dataSource.changing\">${ (record." + attrs.name + "|number:" + decimalPlaces + ") || '--' }</span>";
     };
 
     return DecimalField;
