@@ -53,6 +53,7 @@ class ModelService(ViewService):
     extra_fields = None
     search_fields = None
     field_dependencies = None
+    fields_choices = None
     select_related = None
 
     def __init__(self, request):
@@ -250,6 +251,8 @@ class ModelService(ViewService):
             info['model'] = str(field.rel.related_model._meta)
         elif isinstance(field, DecimalField):
             info['decimal_places'] = field.decimal_places
+        elif self.fields_choices and field.name in self.fields_choices:
+            info['choices'] = self.fields_choices[field.name]
         elif field.choices:
             info['choices'] = field.choices
         return info
