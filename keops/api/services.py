@@ -252,7 +252,10 @@ class ModelService(ViewService):
         elif isinstance(field, DecimalField):
             info['decimal_places'] = field.decimal_places
         elif self.fields_choices and field.name in self.fields_choices:
-            info['choices'] = self.fields_choices[field.name]
+            choices = self.fields_choices[field.name]
+            if callable(choices):
+                choices = choices()
+            info['choices'] = choices
         elif field.choices:
             info['choices'] = field.choices
         return info
