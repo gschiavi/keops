@@ -463,10 +463,9 @@
     DataSource.prototype.setFields = function(values) {
       var attr, control, results, v;
       results = [];
-      console.log('set fields', values);
       for (attr in values) {
       let field = this.scope.view.fields[attr];
-        console.log('find field', field, attr);
+        console.log('set field', field, attr);
 
         v = values[attr];
 
