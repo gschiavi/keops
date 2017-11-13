@@ -469,7 +469,7 @@
 
         v = values[attr];
 
-        if (field && (field.type === 'DateTimeField')) {
+        if (field && ((field.type === 'DateField') || (field.type === 'DateTimeField'))) {
           v = new Date(v);
           console.log('field date', v);
         }
