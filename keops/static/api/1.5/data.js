@@ -465,6 +465,7 @@
       results = [];
       for (attr in values) {
       let field = this.scope.view.fields[attr];
+        console.log('find field', field, attr);
 
         v = values[attr];
 
