@@ -470,6 +470,7 @@
 
         if (field && (field.type === 'DateTimeField')) {
           v = new Date(v);
+          console.log('field date', v);
         }
 
         control = this.scope.form[attr];
