@@ -333,97 +333,114 @@
     };
   });
 
-  uiKatrid.directive('datepicker', [
-    '$filter', function($filter) {
-      return {
-        restrict: 'A',
-        require: '?ngModel',
-        link: function(scope, element, attrs, controller) {
-          var calendar, dateFmt, el, shortDate;
-          el = element;
-          dateFmt = Katrid.i18n.gettext('yyyy-mm-dd');
-          shortDate = dateFmt.replace(/[m]/g, 'M');
-          calendar = element.parent('div').datepicker({
-            format: dateFmt,
-            keyboardNavigation: false,
-            language: Katrid.i18n.languageCode,
-            forceParse: false,
-            autoClose: true,
-            showOnFocus: false
-          }).on('changeDate', function(e) {
-            var dp;
-            dp = calendar.data('datepicker');
-            if (dp.picker.is(':visible')) {
-              el.val($filter('date')(dp._utc_to_local(dp.viewDate), shortDate));
-              return dp.hide();
-            }
-          });
-          if (Katrid.Settings.UI.dateInputMask === true) {
-            el = el.mask(dateFmt.replace(/[A-z]/g, 0));
-          } else if (Katrid.Settings.UI.dateInputMask) {
-            el = el.mask(Katrid.Settings.UI.dateInputMask);
+  uiKatrid.directive('datepicker', ['$filter', $filter =>
+    ({
+      restrict: 'A',
+      priority: 1,
+      require: '?ngModel',
+      link(scope, element, attrs, controller) {
+        let el = element;
+        const dateFmt = Katrid.i18n.gettext('yyyy-mm-dd');
+        const shortDate = dateFmt.replace(/[m]/g, 'M');
+        var calendar = element.parent('div').datepicker({
+          format: dateFmt,
+          keyboardNavigation: false,
+          language: Katrid.i18n.languageCode,
+          forceParse: false,
+          autoClose: true,
+          showOnFocus: false}).on('changeDate', function(e) {
+          const dp = calendar.data('datepicker');
+          if (dp.picker && dp.picker.is(':visible')) {
+            el.val($filter('date')(dp._utc_to_local(dp.viewDate), shortDate));
+            return dp.hide();
           }
-          controller.$formatters.push(function(value) {
-            var dt;
-            dt = new Date(value);
+        });
+
+        // Mask date format
+        if (Katrid.Settings.UI.dateInputMask === true) {
+          el = el.mask(dateFmt.replace(/[A-z]/g, 0));
+        } else if (Katrid.Settings.UI.dateInputMask) {
+          el = el.mask(Katrid.Settings.UI.dateInputMask);
+        }
+
+        controller.$formatters.push(function(value) {
+          if (value) {
+            const dt = new Date(value);
             calendar.datepicker('setDate', dt);
             return $filter('date')(value, shortDate);
-          });
-          controller.$parsers.push(function(value) {
-            console.log('parsers', value, controller);
+          }
+        });
+
+        controller.$parsers.push(function(value) {
+          if (_.isDate(value)) {
+            return moment.utc(value).format('YYYY-MM-DD');
+          }
+          if (_.isString(value)) {
             return moment.utc(value, shortDate.toUpperCase()).format('YYYY-MM-DD');
-          });
-          return el.on('blur', function(evt) {
-            var dp, dt, fmt, s, sep, val;
-            dp = calendar.data('datepicker');
-            if (dp.picker.is(':visible')) {
-              dp.hide();
-            }
-            if (indexOf.call(Katrid.i18n.formats.SHORT_DATE_FORMAT, '/') >= 0) {
-              sep = '/';
-            } else {
-              sep = '-';
-            }
-            fmt = Katrid.i18n.formats.SHORT_DATE_FORMAT.toLowerCase().split(sep);
-            dt = new Date();
-            s = el.val();
-            if (fmt[0] === 'd' && fmt[1] === 'm') {
-              if ((s.length === 5) || (s.length === 6)) {
-                if (s.length === 6) {
-                  s = s.substr(0, 5);
-                }
-                val = s + sep + dt.getFullYear().toString();
+          }
+        });
+
+        controller.$render = function() {
+          if (_.isDate(controller.$viewValue)) {
+            const v = $filter('date')(controller.$viewValue, shortDate);
+            return el.val(v);
+          } else {
+            return el.val(controller.$viewValue);
+          }
+        };
+
+        return el.on('blur', function(evt) {
+          let sep, val;
+          const dp = calendar.data('datepicker');
+          if (dp.picker.is(':visible')) {
+            dp.hide();
+          }
+          if (Array.from(Katrid.i18n.formats.SHORT_DATE_FORMAT).includes('/')) {
+            sep = '/';
+          } else {
+            sep = '-';
+          }
+          const fmt = Katrid.i18n.formats.SHORT_DATE_FORMAT.toLowerCase().split(sep);
+          const dt = new Date();
+          let s = el.val();
+          if ((fmt[0] === 'd') && (fmt[1] === 'm')) {
+            if ((s.length === 5) || (s.length === 6)) {
+              if (s.length === 6) {
+                s = s.substr(0, 5);
               }
-              if ((s.length === 2) || (s.length === 3)) {
-                if (s.length === 3) {
-                  s = s.substr(0, 2);
-                }
-                val = new Date(dt.getFullYear(), dt.getMonth(), s);
-              }
-            } else if (fmt[0] === 'm' && fmt[1] === 'd') {
-              if ((s.length === 5) || (s.length === 6)) {
-                if (s.length === 6) {
-                  s = s.substr(0, 5);
-                }
-                val = s + sep + dt.getFullYear().toString();
-              }
-              if ((s.length === 2) || (s.length === 3)) {
-                if (s.length === 3) {
-                  s = s.substr(0, 2);
-                }
-                val = new Date(dt.getFullYear(), s, dt.getDay());
-              }
+              val = s + sep + dt.getFullYear().toString();
             }
-            if (val) {
-              calendar.datepicker('setDate', val);
-              el.val($filter('date')(dp._utc_to_local(dp.viewDate), shortDate));
-              return controller.$setViewValue($filter('date')(dp._utc_to_local(dp.viewDate), shortDate));
+            if ((s.length === 2) || (s.length === 3)) {
+              if (s.length === 3) {
+                s = s.substr(0, 2);
+              }
+              val = new Date(dt.getFullYear(), dt.getMonth(), s);
             }
-          });
-        }
-      };
-    }
+          } else if ((fmt[0] === 'm') && (fmt[1] === 'd')) {
+            if ((s.length === 5) || (s.length === 6)) {
+              if (s.length === 6) {
+                s = s.substr(0, 5);
+              }
+              val = s + sep + dt.getFullYear().toString();
+            }
+            if ((s.length === 2) || (s.length === 3)) {
+              if (s.length === 3) {
+                s = s.substr(0, 2);
+              }
+              val = new Date(dt.getFullYear(), s, dt.getDay());
+            }
+          }
+          if (val) {
+            calendar.datepicker('setDate', val);
+            el.val($filter('date')(dp._utc_to_local(dp.viewDate), shortDate));
+            return controller.$setViewValue($filter('date')(dp._utc_to_local(dp.viewDate), shortDate));
+          }
+        });
+      }
+    })
+
   ]);
+
 
   uiKatrid.directive('ajaxChoices', function($location) {
     return {
