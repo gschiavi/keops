@@ -464,7 +464,14 @@
       var attr, control, results, v;
       results = [];
       for (attr in values) {
+      let field = this.scope.view.fields[attr];
+
         v = values[attr];
+
+        if (field && (field.type === 'DateTimeField')) {
+          v = new Date(v);
+        }
+
         control = this.scope.form[attr];
         if (control) {
           control.$setViewValue(v);

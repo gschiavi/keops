@@ -373,10 +373,10 @@
 
         controller.$parsers.push(function(value) {
           if (_.isDate(value)) {
-            return moment.utc(value).format('DD/MM/YYYY');
+            return moment.utc(value).format('YYYY-MM-DD');
           }
           if (_.isString(value)) {
-            return moment.utc(value, shortDate.toUpperCase()).format('DD/MM/YYYY');
+            return moment.utc(value, shortDate.toUpperCase()).format('YYYY-MM-DD');
           }
         });
 
