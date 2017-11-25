@@ -465,8 +465,6 @@
       results = [];
       for (attr in values) {
       let field = this.scope.view.fields[attr];
-        console.log('set field', field, attr);
-
         v = values[attr];
 
         if (field && ((field.type === 'DateField') || (field.type === 'DateTimeField'))) {
