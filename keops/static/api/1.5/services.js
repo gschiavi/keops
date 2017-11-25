@@ -116,6 +116,7 @@
       for (f in ref) {
         v = ref[f];
         if (v.choices) {
+          v.choices.push([undefined, '']);
           results.push(v.displayChoices = _.object(v.choices));
         } else {
           results.push(void 0);

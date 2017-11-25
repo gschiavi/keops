@@ -182,7 +182,7 @@ class ModelService(ViewService):
     def serialize_value(self, instance, field):
         try:
             v = getattr(instance, field.name)
-            if v:
+            if v is not None:
                 if isinstance(field, ImageField):
                     return v.name
                 elif isinstance(field, FileField):
@@ -194,6 +194,8 @@ class ModelService(ViewService):
                 elif isinstance(field, DateField):
                     return str(v)
                 elif field.choices:
+                    return str(v)
+                elif isinstance(field, CharField):
                     return str(v)
 
         except FieldDoesNotExist:
