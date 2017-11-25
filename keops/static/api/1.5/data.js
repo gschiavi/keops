@@ -470,8 +470,9 @@
         v = values[attr];
 
         if (field && ((field.type === 'DateField') || (field.type === 'DateTimeField'))) {
-          v = new Date(v);
-          console.log('field date', v);
+          let d = new Date(v);
+          let tz = d.getTimezoneOffset() * 60000;
+          v = new Date(d.getTime() + tz);
         }
 
         control = this.scope.form[attr];
