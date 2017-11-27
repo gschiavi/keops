@@ -138,6 +138,7 @@ class ModelService(ViewService):
         setattr(instance, field_name, value)
 
     def deserialize(self, instance, data):
+        print('Saving data', data)
         data.pop('id', None)
         file_fields = {}
         for k, v in data.items():
