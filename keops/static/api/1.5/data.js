@@ -447,6 +447,7 @@
 
     DataSource.prototype.newRecord = function() {
       this.setState(DataSourceState.inserting);
+      _this.scope.record = {};
       return this.scope.model.getDefaults().done((function(_this) {
         return function(res) {
           if (res.result) {
