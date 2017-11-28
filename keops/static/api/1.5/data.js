@@ -453,6 +453,7 @@
         return function(res) {
           if (res.result) {
             return _this.scope.$apply(function() {
+              _this.recordId = null;
               _this.scope.record = {};
               _this.scope.record.display_name = Katrid.i18n.gettext('(New)');
               return _this.setFields(res.result);
