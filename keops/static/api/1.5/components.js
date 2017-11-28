@@ -306,6 +306,7 @@
           }
         };
         masterChanged = function(key) {
+          console.log('master changed', key);
           var data;
           data = {};
           data[field.field] = key;
