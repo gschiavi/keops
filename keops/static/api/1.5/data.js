@@ -449,7 +449,13 @@
       this.setState(DataSourceState.inserting);
       this.scope.record = null;
       this.scope.recordId = null;
-      this.children = [];
+      // var ref;
+      // ref = this.children;
+      // for (i = 0, len = ref.length; i < len; i++) {
+      //   var child = ref[i];
+      //   console.log(child);
+      //   delete child.modifiedData;
+      // }
       return this.scope.model.getDefaults().done((function(_this) {
         return function(res) {
           if (res.result) {
