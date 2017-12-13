@@ -269,6 +269,7 @@
           scope.gridDialog.modal('toggle');
           scope._incChanges();
         };
+        
         scope.showDialog = function(index) {
           var rec;
           if (index != null) {

@@ -56,6 +56,12 @@
       this.fieldChangeWatchers = [];
     }
 
+    DataSource.prototype.addRecord = function(rec) {
+      console.log('adding record', rec);
+      this._setModifiedData(rec);
+      this.scope.records.push(rec);
+    };
+
     DataSource.prototype.cancelChanges = function() {
       if (this.state === DataSourceState.inserting && Katrid.Settings.UI.goToDefaultViewAfterCancelInsert) {
         this.scope.record = null;
@@ -353,6 +359,23 @@
       }
       console.log(this.modifiedData);
       return data;
+    };
+
+    DataSource.prototype._setModifiedData = function(rec) {
+      if (rec) {
+        let _id = _.hash(rec);
+        let ds = this.modifiedData;
+        if (ds == null) ds = {};
+        let obj = ds[_id];
+        if (!obj) {
+          obj = {};
+          ds[_id] = obj;
+        }
+        for (let attr of Object.keys(rec)) if (!attr.startsWith('$')) obj[attr] = rec[attr];
+        console.log(rec);
+        this.modifiedData = ds;
+        this.masterSource.scope.form.$setDirty();
+      }
     };
 
     DataSource.prototype.getModifiedData = function(form, element, record) {
