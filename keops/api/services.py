@@ -316,7 +316,7 @@ class ModelService(ViewService):
             for rule in rules:
                 if rule.domain:
                     try:
-                        domain = eval(rule.domain, None, {'user': self.request.user})
+                        domain = eval(rule.domain, None, {'user': self.request.user, 'request': self.request})
                         for k, v in domain.items():
                             if isinstance(v, QuerySet):
                                 domain[k] = [obj.pk for obj in v]
