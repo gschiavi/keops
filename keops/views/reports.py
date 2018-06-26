@@ -286,7 +286,7 @@ def report(request, report_file=None, report=None):
                 download = '/reports/temp/%s' % destfile
                 ret = {'open': download}
                 import fastreport
-                fastreport.show_report(destfrx, outname, format, 'Dsn=gsf;uid=sped2;pwd=sped2')
+                fastreport.show_report(destfrx, outname, format, 'Data Source=192.168.1.112:1522/GSFP;Persist Security Info=True;User ID=sped2;Password=sped2')
                 return ret
 
 
