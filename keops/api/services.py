@@ -461,7 +461,7 @@ class ModelService(ViewService):
             labels = field.remote_field.model.objects.filter(pk__in=keys.keys())
             qs = [{field.name: [obj.pk, str(obj)], 'count': keys[obj.pk]} for obj in labels]
         else:
-            qs = qs.values(*grouping).annotate(count=Count(grouping[0])).order_by()
+            qs = list(qs.values(*grouping).annotate(count=Count(grouping[0])).order_by())
             # get fk string
         return qs
 
