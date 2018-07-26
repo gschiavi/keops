@@ -32,8 +32,9 @@ class SearchMenu
     scope = @searchView.scope
     scope.model.getFieldChoices(item.ref.name, scope.search.text)
     .then (res) =>
+      console.log res
       if res.ok
-        for obj in res.result
+        for obj in res.result.items
           @searchView.loadItem(item.item, obj, item)
 
   collapse: (item) ->
@@ -210,12 +211,12 @@ class SearchItem
 
 class SearchField extends SearchItem
   constructor: (name, item, parent, ref, menu) ->
+    super name, item, parent, ref, menu
     if ref.type is 'ForeignKey'
       @expandable = true
       @children = []
     else
       @expandable = false
-    super name, item, parent, ref, menu
 
 
 class SearchFilter extends SearchItem
