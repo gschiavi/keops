@@ -298,18 +298,22 @@ class ModelService(ViewService):
         def set_param(param):
             for p, v in param.items():
                 field_name = f = p.split('__', 1)[0]
-                f = self.model._meta.get_field(f)
-                if isinstance(f, models.DateField):
-                    v = v.replace('-', ' ')
-                    if ' ' in v:
-                        field_name += '__range'
-                        v1, v2 = v.split(' ')
-                        v1 = to_date(v1)
-                        v2 = to_date(v2)
-                        v = (v1, v2)
-                    else:
-                        v = to_date(v)
-                return {field_name: v}
+                try:
+                    f = self.model._meta.get_field(f)
+                except Exception as e:
+                    pass
+                else:
+                    if isinstance(f, models.DateField):
+                        v = v.replace('-', ' ')
+                        if ' ' in v:
+                            field_name += '__range'
+                            v1, v2 = v.split(' ')
+                            v1 = to_date(v1)
+                            v2 = to_date(v2)
+                            v = (v1, v2)
+                        else:
+                            v = to_date(v)
+                    return {field_name: v}
             return param
 
         params = kwargs.get('params', {}) or {}
