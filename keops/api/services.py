@@ -286,8 +286,7 @@ class ModelService(ViewService):
                 r[f.name] = False
         return r or None
 
-    def filter(self, count=None, page=None, *args, **kwargs):
-
+    def set_param(self, param):
         def to_date(val):
             if '/' in val:
                 fmt = '%d/%m/%Y'
@@ -295,35 +294,35 @@ class ModelService(ViewService):
                 fmt = '%d%m%Y'
             return datetime.datetime.strptime(val, fmt)
 
-        def set_param(param):
-            for p, v in param.items():
-                field_name = f = p.split('__', 1)[0]
-                try:
-                    f = self.model._meta.get_field(f)
-                except Exception as e:
-                    pass
-                else:
-                    if isinstance(f, models.DateField):
-                        v = v.replace('-', ' ')
-                        if ' ' in v:
-                            field_name += '__range'
-                            v1, v2 = v.split(' ')
-                            v1 = to_date(v1)
-                            v2 = to_date(v2)
-                            v = (v1, v2)
-                        else:
-                            v = to_date(v)
-                    elif isinstance(f, (models.IntegerField, models.FloatField, models.DecimalField)):
-                        v = v.replace('-', ' ')
-                        if ' ' in v:
-                            field_name += '__range'
-                            v1, v2 = v.split(' ')
-                            v = (v1, v2)
+        for p, v in param.items():
+            field_name = f = p.split('__', 1)[0]
+            try:
+                f = self.model._meta.get_field(f)
+            except Exception as e:
+                pass
+            else:
+                if isinstance(f, models.DateField):
+                    v = v.replace('-', ' ')
+                    if ' ' in v:
+                        field_name += '__range'
+                        v1, v2 = v.split(' ')
+                        v1 = to_date(v1)
+                        v2 = to_date(v2)
+                        v = (v1, v2)
                     else:
-                        field_name = p
-                    return {field_name: v}
-            return param
+                        v = to_date(v)
+                elif isinstance(f, (models.IntegerField, models.FloatField, models.DecimalField)):
+                    v = v.replace('-', ' ')
+                    if ' ' in v:
+                        field_name += '__range'
+                        v1, v2 = v.split(' ')
+                        v = (v1, v2)
+                else:
+                    field_name = p
+                return {field_name: v}
+        return param
 
+    def filter(self, count=None, page=None, *args, **kwargs):
         params = kwargs.get('params', {}) or {}
         qs = self.model.objects.all()
         if isinstance(params, Q):
@@ -335,14 +334,14 @@ class ModelService(ViewService):
                 if isinstance(param, dict) and 'OR' in param:
                     q = None
                     for p in param['OR']:
-                        p = set_param(p)
+                        p = self.set_param(p)
                         if q is None:
                             q = Q(**p)
                         else:
                             q |= Q(**p)
                     qs = qs.filter(q)
                 else:
-                    param = set_param(param)
+                    param = self.set_param(param)
                     qs = qs.filter(**param)
 
         if self.select_related:
