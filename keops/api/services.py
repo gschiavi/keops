@@ -15,6 +15,7 @@ from django.utils.encoding import force_str
 from django.db.models import Q, Count
 from django.apps import apps
 from django.db.models.query_utils import DeferredAttribute
+from django.db import models
 from django.db.models.fields.related import ManyToOneRel, ManyToManyField
 from django.db.models import DecimalField, DateField, CharField, FileField
 from django.db.models import QuerySet
@@ -286,6 +287,31 @@ class ModelService(ViewService):
         return r or None
 
     def filter(self, count=None, page=None, *args, **kwargs):
+
+        def to_date(val):
+            if '/' in val:
+                fmt = '%d/%m/%Y'
+            else:
+                fmt = '%d%m%Y'
+            return datetime.datetime.strptime(val, fmt)
+
+        def set_param(param):
+            for p, v in param.items():
+                field_name = f = p.split('__', 1)[0]
+                f = self.model._meta.get_field(f)
+                if isinstance(f, models.DateField):
+                    v = v.replace('-', ' ')
+                    if ' ' in v:
+                        field_name += '__range'
+                        v1, v2 = v.split(' ')
+                        v1 = to_date(v1)
+                        v2 = to_date(v2)
+                        v = (v1, v2)
+                    else:
+                        v = to_date(v)
+                return {field_name: v}
+            return param
+
         params = kwargs.get('params', {}) or {}
         qs = self.model.objects.all()
         if isinstance(params, Q):
@@ -297,12 +323,14 @@ class ModelService(ViewService):
                 if isinstance(param, dict) and 'OR' in param:
                     q = None
                     for p in param['OR']:
+                        p = set_param(p)
                         if q is None:
                             q = Q(**p)
                         else:
                             q |= Q(**p)
                     qs = qs.filter(q)
                 else:
+                    param = set_param(param)
                     qs = qs.filter(**param)
 
         if self.select_related:
