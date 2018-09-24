@@ -313,7 +313,7 @@ class ModelService(ViewService):
                             v = (v1, v2)
                         else:
                             v = to_date(v)
-                    elif isinstance(f, (models.IntegerField, models.FloatField)):
+                    elif isinstance(f, (models.IntegerField, models.FloatField, models.DecimalField)):
                         v = v.replace('-', ' ')
                         if ' ' in v:
                             field_name += '__range'
