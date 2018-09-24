@@ -313,6 +313,8 @@ class ModelService(ViewService):
                             v = (v1, v2)
                         else:
                             v = to_date(v)
+                    else:
+                        field_name = p
                     return {field_name: v}
             return param
 
