@@ -365,6 +365,7 @@ class ModelService(ViewService):
         return qs
 
     def _search(self, count=None, page=None, *args, **kwargs):
+        page_size = kwargs.pop('PAGE_SIZE', PAGE_SIZE)
         qs = self.filter(count=count, page=page, *args, **kwargs)
         _count = None
         if count:
@@ -375,9 +376,9 @@ class ModelService(ViewService):
             page = 1
         offset = 0
         if page > 1:
-            offset = (page - 1) * PAGE_SIZE
+            offset = (page - 1) * page_size
 
-        qs = qs[offset:offset + PAGE_SIZE]
+        qs = qs[offset:offset + page_size]
         qs._count = _count
         return qs
 
