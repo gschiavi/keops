@@ -274,20 +274,30 @@ def report(request, report_file=None, report=None):
                 format = params['kwargs'].get('format', 'pdf')
                 params = params['kwargs']['params']
                 data = params['data']
-                filename = report_file or params['file']
-                report_template = get_report_file(filename)
-                report_file = report_template.attrib['report-file']
-                report_file = os.path.join(settings.BASE_DIR, 'reports', report_file)
-                outname = next(tempfile._get_candidate_names())
-                destfile = outname + '.' + format
-                destfrx = os.path.join(settings.REPORT_ROOT, outname + '.frx')
-                clone(report_file, params, destfrx, report_template)
-                outname = os.path.join(settings.REPORT_ROOT, destfile)
-                download = '/reports/temp/%s' % destfile
-                ret = {'open': download}
-                import fastreport
-                fastreport.show_report(destfrx, outname, format, 'Data Source=192.168.1.112:1522/GSFP;Persist Security Info=True;User ID=sped2;Password=sped2')
-                return ret
+                fname = report_file or params['file']
+                fname = get_report_file(report_file).attrib['report-file']
+                if fname.endswith('.jinja2'):
+                    pass
+                elif fname.endswith('mako'):
+                    from keops.reports.chrome import ReportEngine
+                    fields = Fields(et.fromstring(open(os.path.join(settings.REPORT_TEMPLATES_DIR, report_file), 'r', encoding='utf-8').read()).find('fields'))
+                    eng = ReportEngine(fname)
+                    ret = eng.to_pdf(fields=fields)
+                    return {'open': f'/reports/temp/{ret}'}
+                else:
+                    report_template = get_report_file(filename)
+                    report_file = report_template.attrib['report-file']
+                    report_file = os.path.join(settings.BASE_DIR, 'reports', report_file)
+                    outname = next(tempfile._get_candidate_names())
+                    destfile = outname + '.' + format
+                    destfrx = os.path.join(settings.REPORT_ROOT, outname + '.frx')
+                    clone(report_file, params, destfrx, report_template)
+                    outname = os.path.join(settings.REPORT_ROOT, destfile)
+                    download = '/reports/temp/%s' % destfile
+                    ret = {'open': download}
+                    import fastreport
+                    fastreport.show_report(destfrx, outname, format, 'Data Source=192.168.1.112:1522/GSFP;Persist Security Info=True;User ID=sped2;Password=sped2')
+                    return ret
 
 
 def get_report_file(filename):
@@ -306,3 +316,25 @@ def choices(request, report_file=None):
             cur = conn.cursor()
             cur.execute(sql_choices)
             return JsonResponse({'items': [{'id': row[0], 'text': row[1]} for row in cur.fetchmany(50)], 'count': 50})
+
+
+class Field:
+    def __init__(self, field):
+        self.field = field
+        self.name = field.attrib['name']
+        self.label = field.attrib['label']
+
+    def th(self):
+        return f'<th>{self.label or self.name}</th>'
+
+
+class Fields:
+    def __init__(self, xml):
+        self.xml = xml
+        self.lst = []
+        for f in xml:
+            self.lst.append(Field(f))
+
+    def __iter__(self):
+        return iter(self.lst)
+
