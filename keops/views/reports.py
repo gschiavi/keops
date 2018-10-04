@@ -324,8 +324,8 @@ class Field:
         self.name = field.attrib['name']
         self.label = field.attrib['label']
 
-    def th(self):
-        return f'<th>{self.label or self.name}</th>'
+   # def th(self):
+    #    return f'<th>{self.label or self.name}</th>'
 
 
 class Fields:
