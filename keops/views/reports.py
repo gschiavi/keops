@@ -283,7 +283,7 @@ def report(request, report_file=None, report=None):
                     fields = Fields(et.fromstring(open(os.path.join(settings.REPORT_TEMPLATES_DIR, report_file), 'r', encoding='utf-8').read()).find('fields'))
                     eng = ReportEngine(fname)
                     ret = eng.to_pdf(fields=fields)
-                    return {'open': f'/reports/temp/{ret}'}
+                    ##return {'open': f'/reports/temp/{ret}'}
                 else:
                     report_template = get_report_file(filename)
                     report_file = report_template.attrib['report-file']
