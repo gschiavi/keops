@@ -50,7 +50,7 @@ def _report(request, report_file=None):
         menu = Menu.objects.filter(parent_id=None, groups__in=groups)
 
     return {
-        'content': open(os.path.join(settings.BASE_DIR, 'reports', filename), encoding='utf-8').read(),
+        'content': open(os.path.join(settings.BASE_DIR, 'reports', 'novos', filename), encoding='utf-8').read(),
         'fields': {f['name']: f for f in rep['fields']},
         'user_reports': [
             {'id': rep.pk, 'name': rep.name}
@@ -282,7 +282,8 @@ def report(request, report_file=None, report=None):
                     from keops.reports.chrome import ReportEngine
                     fields = Fields(et.fromstring(open(os.path.join(settings.REPORT_TEMPLATES_DIR, report_file), 'r', encoding='utf-8').read()).find('fields'))
                     eng = ReportEngine(fname)
-                    ret = eng.to_pdf(fields=fields)
+                    empresa = request.session['empresa']
+                    ret = eng.to_pdf(fields=fields, request=request)
                     return {'open': f'/reports/temp/{ret}'}
                 else:
                     report_template = get_report_file(filename)
@@ -301,7 +302,7 @@ def report(request, report_file=None, report=None):
 
 
 def get_report_file(filename):
-    return et.fromstring(open(os.path.join(settings.BASE_DIR, 'reports', filename), encoding='utf-8').read())
+    return et.fromstring(open(os.path.join(settings.BASE_DIR, 'reports', 'novos', filename), encoding='utf-8').read())
 
 
 @login_required

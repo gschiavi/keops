@@ -32,9 +32,10 @@ class ReportEngine:
 
     def render(self, **kwargs):
         def query(cmd, *args, **kwargs):
-            cur = connection.cursor()
-            cur.execute(cmd, *args, **kwargs)
-            return cur.fetchall()
+            with connection.cursor() as cur:
+                cur.execute(cmd, *args, **kwargs)
+                rows = cur.fetchall()
+            return rows
 
         kwargs['report_static_uri'] = report_static_uri
         return self.report.render(select=query, **kwargs)
