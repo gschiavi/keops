@@ -73,5 +73,5 @@ class ReportEngine:
         with open(file_path, 'wb') as tmp:
             tmp.write(xml)
             tmp.close()
-            subprocess.call([settings.CHROME_PATH, '--file=' + file_path, output_path, '--javascript'])
+            subprocess.call([settings.CHROME_PATH, '--headless', '--file=' + file_path, output_path, '--javascript'])
             return fname + '.pdf'
