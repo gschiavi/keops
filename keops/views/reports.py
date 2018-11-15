@@ -281,9 +281,15 @@ def report(request, report_file=None, report=None):
                 elif fname.endswith('mako'):
                     from keops.reports.chrome import ReportEngine
                     fields = Fields(et.fromstring(open(os.path.join(settings.REPORT_TEMPLATES_DIR, report_file), 'r', encoding='utf-8').read()).find('fields'))
+                    if 'fields' in params:
+                        flds = params['fields']
+                        if flds:
+                            flds = flds.split(',')
+                            if flds:
+                                fields = [f for f in fields if f.name in flds]
                     eng = ReportEngine(fname)
                     empresa = request.session['empresa']
-                    ret = eng.to_pdf(fields=fields, request=request)
+                    ret = eng.to_pdf(fields=fields.values(), request=request)
                     return {'open': f'/reports/temp/{ret}'}
                 else:
                     report_template = get_report_file(filename)
@@ -302,7 +308,7 @@ def report(request, report_file=None, report=None):
 
 
 def get_report_file(filename):
-    return et.fromstring(open(os.path.join(settings.BASE_DIR, 'reports', 'novos', filename), encoding='utf-8').read())
+    return et.fromstring(open(os.path.join(settings.REPORT_TEMPLATES_DIR, filename), encoding='utf-8').read())
 
 
 @login_required
@@ -329,12 +335,14 @@ class Field:
         return f'<th>{self.label or self.name}</th>'
 
 
-class Fields:
+class Fields(dict):
     def __init__(self, xml):
+        super().__init__()
         self.xml = xml
         self.lst = []
         for f in xml:
-            self.lst.append(Field(f))
+            field = Field(f)
+            self[field.name] = field
 
     def __iter__(self):
         return iter(self.lst)
