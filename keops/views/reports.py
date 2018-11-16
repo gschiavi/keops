@@ -286,7 +286,7 @@ def report(request, report_file=None, report=None):
                         if flds:
                             flds = flds.split(',')
                             if flds:
-                                fields = [f for f in fields.values() if f.name in flds]
+                                fields = {f.name: f for f in fields.values() if f.name in flds}
                     eng = ReportEngine(fname)
                     empresa = request.session['empresa']
                     ret = eng.to_pdf(fields=fields.values(), request=request, data=data)
