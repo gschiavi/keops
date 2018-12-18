@@ -290,7 +290,7 @@ def report(request, report_file=None, report=None):
                     eng = ReportEngine(fname)
                     empresa = request.session['empresa']
                     ret = eng.to_pdf(fields=fields.values(), request=request, data=data)
-                    return {'open': f'/reports/temp/{ret}'}
+                    return {'open': '/reports/temp/%s' % ret}
                 else:
                     report_template = get_report_file(report_file)
                     report_file = report_template.attrib['report-file']
