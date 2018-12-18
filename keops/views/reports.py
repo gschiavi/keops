@@ -292,7 +292,7 @@ def report(request, report_file=None, report=None):
                     ret = eng.to_pdf(fields=fields.values(), request=request, data=data)
                     return {'open': f'/reports/temp/{ret}'}
                 else:
-                    report_template = get_report_file(filename)
+                    report_template = get_report_file(report_file).attrib['report-file']
                     report_file = report_template.attrib['report-file']
                     report_file = os.path.join(settings.BASE_DIR, 'reports', report_file)
                     outname = next(tempfile._get_candidate_names())
