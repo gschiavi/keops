@@ -332,7 +332,7 @@ class Field:
         self.label = field.attrib['label']
 
     def th(self):
-        return f'<th>{self.label or self.name}</th>'
+        return '<th>%s</th>' % (self.label or self.name)
 
 
 class Fields(dict):
