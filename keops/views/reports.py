@@ -295,10 +295,10 @@ def report(request, report_file=None, report=None):
                     report_template = get_report_file(report_file)
                     report_file = report_template.attrib['report-file']
                     report_file = os.path.join(settings.BASE_DIR, 'reports', report_file)
-                    print('REPORT FILE', report_file)
                     outname = next(tempfile._get_candidate_names())
                     destfile = outname + '.' + format
                     destfrx = os.path.join(settings.REPORT_ROOT, outname + '.frx')
+                    print('REPORT FILE', destfrx)
                     clone(report_file, params, destfrx, report_template)
                     outname = os.path.join(settings.REPORT_ROOT, destfile)
                     download = '/reports/temp/%s' % destfile
