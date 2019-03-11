@@ -48,7 +48,10 @@ class WindowAction(Action):
         super(WindowAction, self).save(*args, **kwargs)
 
     def dispatch_action(self, request):
-        service = str(self.model.model_class()._meta)
+        if self.model_name:
+            service = self.model_name
+        else:
+            service = str(self.model.model_class()._meta)
         svc = site.services[service](request)
         view_type = request.GET.get('view_type', 'list')
         return svc.view_action(view_type)
