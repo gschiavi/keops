@@ -92,7 +92,7 @@ def read_menu(obj, parent=None, **attrs):
 
 def read_action(obj, **attrs):
     act = obj.attrib['type']
-    if act == 'ir.window.action':
+    if act == 'ir.action.window':
         act = 'base.windowaction'
     s = obj.attrib['name']
     if obj.attrib.get('name'):
