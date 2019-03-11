@@ -64,7 +64,7 @@ def read_menu(obj, parent=None, **attrs):
     if action_id:
         sys_obj = Object
         try:
-            action = sys_obj.get_object(action_id).object
+            action = sys_obj.get_object(action_id).content_object
             if not s:
                 s = action.name
             action_id = action.pk
