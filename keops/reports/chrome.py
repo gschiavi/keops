@@ -74,4 +74,5 @@ class ReportEngine:
             tmp.write(xml)
             tmp.close()
             subprocess.call([settings.CHROME_PATH, '--headless', '--disable-gpu', '--print-to-pdf=' + output_path, 'file://' + file_path])
+            print('done')
             return fname + '.pdf'

@@ -28,6 +28,8 @@ class WindowAction(Action):
     object_id = models.BigIntegerField()
     model = models.ForeignKey(ContentType, related_name='+')
     source_model = models.ForeignKey(ContentType, related_name='+')
+    model_name = models.CharField(max_length=64)
+    source_model_name = models.CharField(max_length=64)
     target = models.CharField(max_length=16, choices=(('current', 'Current Window'), ('new', 'New')), default='current')
     view_mode = models.CharField(max_length=128, default='list,form')
     view_type = models.CharField(max_length=16, choices=(('list', 'List'), ('form', 'Form')), default='form', null=False)
