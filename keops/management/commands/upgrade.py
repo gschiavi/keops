@@ -21,8 +21,8 @@ class Command(AppCommand):
         Perform the command's actions for app_config, an AppConfig instance
         corresponding to an application label given on the command line.
         """
-        print('loading file', app_config)
         data = getattr(app_config, 'data', None)
+        print('loading file', data, app_config)
         if data:
             for filename in data:
                 filename = os.path.join(app_config.path, 'fixtures', filename)
