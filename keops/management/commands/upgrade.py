@@ -25,5 +25,9 @@ class Command(AppCommand):
         print('loading file', app_config.data)
         if data:
             for filename in data:
-                filename = os.path.join(app_config.path, 'fixtures', filename)
-                self._load_file(app_config, filename)
+                try:
+                    filename = os.path.join(app_config.path, 'fixtures', filename)
+                    self._load_file(app_config, filename)
+                except:
+                    print('Error loading:', filename)
+                    raise
