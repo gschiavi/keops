@@ -22,7 +22,7 @@ class Command(AppCommand):
         corresponding to an application label given on the command line.
         """
         data = getattr(app_config, 'data', None)
-        print('loading file', data, app_config)
+        print('loading file', app_config.path)
         if data:
             for filename in data:
                 filename = os.path.join(app_config.path, 'fixtures', filename)
