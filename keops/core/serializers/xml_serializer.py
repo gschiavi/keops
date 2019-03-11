@@ -103,7 +103,7 @@ def read_action(obj, **attrs):
     if 'model' in obj.attrib:
         # model = _get_model(obj.attrib['model'])
         # fields['model'] = ContentType.objects.get_by_natural_key(model._meta.app_label, model._meta.model_name)
-        fields['model'] = obj.attrib['model']
+        fields['model_name'] = obj.attrib['model']
 
     action = {
         'model': act,
