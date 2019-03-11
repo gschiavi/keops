@@ -34,13 +34,13 @@ def read_object(obj, **attrs):
     obj_name = obj.pop('id')
     obj_id = None
     try:
+        print('Load object', obj_name)
         obj_id = Object.objects.get(name=obj_name)
         instance = obj_id.content_object
         for k, v in obj['fields'].items():
             setattr(instance, k, v)
         instance.save()
     except ObjectDoesNotExist:
-        print('model', obj['model'])
         instance = base.build_instance(_get_model(obj['model']), obj['fields'], attrs.get('using', DEFAULT_DB_ALIAS))
         instance.save()
         ct = ContentType.objects.get_by_natural_key(instance._meta.app_label, instance._meta.model_name.lower())
