@@ -21,6 +21,7 @@ class Command(AppCommand):
         Perform the command's actions for app_config, an AppConfig instance
         corresponding to an application label given on the command line.
         """
+        print('upgrading data')
         data = getattr(app_config, 'data', None)
         if data:
             for filename in data:
