@@ -58,15 +58,18 @@ def read_menu(obj, parent=None, **attrs):
     if action_id == 'None':
         action_id = None
     url = obj.attrib.get('url')
-    if action_id:
-        sys_obj = Object
-        try:
-            action_id = sys_obj.get_object(action_id).object_id
-        except ObjectDoesNotExist:
-            raise Exception('The object id "%s" does not exist' % action_id)
     s = obj.attrib.get('name')
     if attrs.get('translate'):
         s = _(s)
+    if action_id:
+        sys_obj = Object
+        try:
+            action = sys_obj.get_object(action_id).object
+            if not s:
+                s = action.name
+            action_id = action.pk
+        except ObjectDoesNotExist:
+            raise Exception('The object id "%s" does not exist' % action_id)
     fields = {
         'parent_id': obj.attrib.get('parent', parent),
         'action_id': action_id,
