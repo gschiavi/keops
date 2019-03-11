@@ -13,6 +13,7 @@ class Command(AppCommand):
     def _load_file(self, app_config, filename):
         s = open(filename, encoding='utf-8').read()
         s = Template(s).render(settings=settings)
+        print('loading file', filename, s)
         activate(settings.LANGUAGE_CODE)
         xml_serializer.Deserializer(s)
 
@@ -21,7 +22,6 @@ class Command(AppCommand):
         Perform the command's actions for app_config, an AppConfig instance
         corresponding to an application label given on the command line.
         """
-        print('upgrading data')
         data = getattr(app_config, 'data', None)
         if data:
             for filename in data:
