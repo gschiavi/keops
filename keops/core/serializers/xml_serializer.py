@@ -91,6 +91,8 @@ def read_menu(obj, parent=None, **attrs):
 
 def read_action(obj, **attrs):
     act = obj.attrib['type']
+    if act == 'ir.window.action':
+        act = 'base.windowaction'
     s = obj.attrib['name']
     if obj.attrib.get('name'):
         s = _(s)
@@ -98,8 +100,10 @@ def read_action(obj, **attrs):
         'name': s,
     }
     if 'model' in obj.attrib:
-        model = _get_model(obj.attrib['model'])
-        fields['model'] = ContentType.objects.get_by_natural_key(model._meta.app_label, model._meta.model_name)
+        # model = _get_model(obj.attrib['model'])
+        # fields['model'] = ContentType.objects.get_by_natural_key(model._meta.app_label, model._meta.model_name)
+        fields['model'] = obj.attrib['model']
+
     action = {
         'model': act,
         'id': obj.attrib['id'],
